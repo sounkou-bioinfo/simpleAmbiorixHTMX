@@ -1,0 +1,55 @@
+name: simpleForm
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: read-all
+ 
+env:
+  RENV_PATHS_ROOT: ~/.cache/R/renv
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: r-lib/actions/setup-pandoc@v2
+
+    - uses: r-lib/actions/setup-r@v2
+      with:
+          r-version: 4.4.1
+          use-public-rspm: true
+
+    - uses: r-lib/actions/setup-renv@v2
+
+    - name: Create and populate .Renviron file
+      env:
+        RS_CONNECT_NAME: ${{ secrets.RS_CONNECT_NAME }}
+        RS_CONNECT_TOKEN: ${{ secrets.RS_CONNECT_TOKEN }}
+        RS_CONNECT_SECRET: ${{ secrets.RS_CONNECT_SECRET }}
+      run: |
+        echo $PWD
+        if [ -z "${RS_CONNECT_NAME}" ]; then echo "----empty" ; fi
+        if [ -z "${RS_CONNECT_TOKEN}" ]; then echo "----empty" ; fi
+        if [ -z "${RS_CONNECT_SECRET}" ]; then echo "----empty" ; fi
+
+      shell: bash
+  
+    - name: Publish shinyapps
+      env:
+        APPNAME: simpleAmbiorixHTMX
+        ACCOUNT: ${{ secrets.RS_CONNECT_NAME }}
+        SERVER: shinyapps.io # server
+      shell: Rscript {0}
+      run: |
+        print(getwd())
+        print(list.files())
+        if(  "${{ secrets.RS_CONNECT_NAME }}" == "") {quit()}
+        renv::restore()
+        rsconnect::setAccountInfo("${{ secrets.RS_CONNECT_NAME }}", "${{ secrets.RS_CONNECT_TOKEN }}", "${{ secrets.RS_CONNECT_SECRET }}")
+        rsconnect::deployApp(appName = "${{ env.APPNAME }}" , forceUpdate = TRUE)
+      
