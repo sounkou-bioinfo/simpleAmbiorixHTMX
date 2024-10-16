@@ -23,7 +23,7 @@ home_get <- function(req, res) {
     <h1>Hello World using Ambiorix and HTMX from R</h1>
 
     <div style="display:flex;flex-direction: row;align-items: flex-start; gap:20px;">
-      <button hx-post="/clicked" hx-swap="innerHTML">
+      <button hx-post="./clicked" hx-swap="innerHTML">
         Click Me
       </button>
 
@@ -31,7 +31,7 @@ home_get <- function(req, res) {
       <div>
         <p>The following plot is loaded automagically</p>
         <div
-          hx-get="/plot"
+          hx-get="./plot"
           hx-trigger="load"
           style="height:400px;width:400px">
           "Loading plot..."
@@ -42,7 +42,7 @@ home_get <- function(req, res) {
       <div>
         <p>The following plot is loaded/updated on button click</p>
         <button
-          hx-get="/plot2"
+          hx-get="./plot2"
           hx-swap="innerHTML show:top"
           hx-target="#target-plot">
           Update Plot
