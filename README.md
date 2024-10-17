@@ -11,6 +11,7 @@ A running shiny server where `{ambiorix}` and `{htmltools}` are installed.
 
 ```{r}
 renv::restore()
+renv::install(shiny)
 rsconnect::setAccountInfo(name = Sys.getenv("RS_CONNECT_NAME"),
 			  token = Sys.getenv("RS_CONNECT_TOKEN"),
 			  secret = Sys.getenv("RS_CONNECT_SECRET")
