@@ -1,11 +1,25 @@
 # simple htmx demo 
 # inspired from https://gist.github.com/DavZim/c01511cce2db14efbd12a34c18d3a93d
+# Post and get examples
+# Two plots 
+# Plot: not interactive
+# plot2 : interactive
+# global variable click
+# encoding the generated image with base64enc::base64encode
 
-#  load packages ----
 
-
-#
+#' home_get
+#'
+#' page inline html
+#'
+#' @param req ambiorix request object
+#' @param res ambiorix response object
+#'
+#' @return / html response
+#' @examples
+#' # ADD_EXAMPLES_HERE
 home_get <- function(req, res) {
+
   html <- '
   <!---public/index.html--->
 <!DOCTYPE html>
@@ -18,7 +32,6 @@ home_get <- function(req, res) {
   </head>
   <body>
     <h1>Hello World using Ambiorix and HTMX from R</h1>
-
     <div style="display:flex;flex-direction: row;align-items: flex-start; gap:20px;">
       <button hx-post="./clicked" hx-swap="innerHTML">
         Click Me
@@ -56,18 +69,42 @@ home_get <- function(req, res) {
   res$set_status(200L)$send(html)
 }
 
-##
-n_clicked <- 0
-##
-
+# Poor man pointers -----
+clicks <- new.env( parent = .GlobalEnv)
+clicks$n_clicked <- 0
+#' nclicks_get
+#'
+#' update clicks to simulate post request
+#'
+#' @param req ambiorix req object
+#' @param res ambiorix res object
+#'
+#' @return RETURN_DESCRIPTION
+#' @examples
+#' # ADD_EXAMPLES_HERE
 nclicks_get <- function(req, res) {
-  n_clicked <<- n_clicked + 1
-  res$set_status(200L)$send(
-    paste0("Clicked <b>", n_clicked, "</b>\n")
+    clicks$n_clicked <- clicks$n_clicked + 1
+    n_clicked <- clicks$n_clicked
+    res$set_status(200L)$
+    send(
+    paste0(
+        "Clicked <b>",
+        n_clicked,
+        "</b>\n")
   )
   
     }
 
+#' plot_get
+#'
+#' static plot
+#'
+#' @param req DESCRIPTION.
+#' @param res DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @examples
+#' # ADD_EXAMPLES_HERE
 plot_get <- function(req, res) {
   png(filename = "plot.png", width = 400, height = 350)
   plot(1:10, cumsum(rnorm(10)))
@@ -82,6 +119,17 @@ plot_get <- function(req, res) {
 
 
 
+
+#' plot2_get
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param req DESCRIPTION.
+#' @param res DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @examples
+#' # ADD_EXAMPLES_HERE
 plot2_get <- function(req, res) {
   png(filename = "plot2.png", width = 400, height = 350)
   ir <- iris[sample.int(nrow(iris), 10), ]
@@ -100,6 +148,7 @@ plot2_get <- function(req, res) {
   )
 }
 
+# if shiny server runner
 
 port <- Sys.getenv("SHINY_PORT", 8080L)
 
