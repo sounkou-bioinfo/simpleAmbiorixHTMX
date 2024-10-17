@@ -3,9 +3,6 @@
 
 #  load packages ----
 
-library(htmltools)
-library(ambiorix)
-# ref -------
 
 #
 home_get <- function(req, res) {
@@ -106,7 +103,7 @@ plot2_get <- function(req, res) {
 
 port <- Sys.getenv("SHINY_PORT", 8080L)
 
-Ambiorix$
+ambiorix::Ambiorix$
   new(port = port)$
   get("/", home_get)$
   post("/clicked", nclicks_get)$
